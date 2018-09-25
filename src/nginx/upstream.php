@@ -6,7 +6,13 @@ function urlsafeB64Encode($input) : string
 }
 
 
-function encode($msg): string {
+function createSignature(): string {
+
+    $msg = implode("\n", [
+        $_SERVER['HTTP_X_FORWARDED_USER'],
+        $_SERVER['HTTP_X_FORWARDED_EMAIL']
+    ]);
+
     $algorithm = "sha256";
     $signature = hash_hmac($algorithm, $msg, $_SERVER['SERVICE_SECRET'], true);
     return urlsafeB64Encode($signature);
@@ -19,9 +25,7 @@ function redirect()
     $provider  = $_SERVER['OAUTH2PROXY_PROVIDER'];
     $hostname  = $_SERVER['OAUTH2PROXY_X_FORWARDED_FOR_SITE'] . $_SERVER['DP_SITE_HOSTNAME_SUFFIX'];
 
-
-    $msg = implode("\n", [ $email, $user]);
-    $signature = encode($msg);;
+    $signature = createSignature();;
 
     $url = implode("", [
         "scheme" => "https://",
@@ -35,17 +39,11 @@ function redirect()
     ]);
 
     header("Location: $url");
-    return encode($msg);
 }
 
 function verifySignature()
 {
-    $msg = implode("\n", [
-        $_SERVER['HTTP_X_FORWARDED_USER'],
-        $_SERVER['HTTP_X_FORWARDED_EMAIL']
-    ]);
-
-    $signature = encode($msg);
+    $signature = createSignature();
     $existingSignature = $_SERVER['HTTP_X_SIGNATURE'];
     if ($signature === $existingSignature) {
         header('HTTP/1.0 200 Ok');
