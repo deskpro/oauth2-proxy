@@ -16,6 +16,9 @@ COPY www.conf /etc/php7/php-fpm.d/www.conf
 COPY oauth2.conf /etc/nginx/conf.d/oauth2.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
+COPY upstream.php /var/www/public/upstream.php
+COPY www.conf /etc/php7/php-fpm.d/www.conf
+
 RUN mkdir -p /var/run/php-fpm
 
 RUN mkdir -p /var/log/supervisor
