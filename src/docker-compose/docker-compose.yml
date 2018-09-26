@@ -42,3 +42,9 @@ services:
       - proxy-env-file
       - linkedin-env-file
 
+  oauth2azure:
+    image: dpsocialauth/proxy:latest
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/azure/oauth2 --provider=azure --redirect-url=https://auth.deskpro.com/azure/oauth2/callback
+    env_file:
+      - proxy-env-file
+      - azure-env-file
