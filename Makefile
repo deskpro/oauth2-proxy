@@ -1,3 +1,4 @@
+all: proxy-frontend proxy-docker
 
 proxy-frontend:
 	echo "building frontend (nginx) image " ;\
@@ -9,4 +10,4 @@ proxy-docker:
 	cd src/oauth2-proxy ;\
 	docker image build --tag dpsocialauth/proxy .
 
-.PHONY: oauth2proxy-docker
+.PHONY: oauth2proxy-docker all
