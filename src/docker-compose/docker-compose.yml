@@ -4,7 +4,6 @@ version: '2'
 services:
   gateway:
     image: dpsocialauth/frontend:latest
-#    command: [nginx-debug, '-g', 'daemon off;']
     volumes:
         - ../nginx/oauth2.conf:/etc/nginx/conf.d/oauth2.conf
         - ../nginx/oauth2-dev.conf:/etc/nginx/conf.d/oauth2-dev.conf
@@ -22,13 +21,8 @@ services:
       - SERVICE_SECRET=asecret
       - DP_SITE_HOSTNAME_SUFFIX=.deskpro.com
     ports:
-     - "8080:8080"
-     - "8081:8081"
-     - "8082:8082"
-    links:
-      - oauth2google
-      - oauth2linkedin
-    network_mode: bridge
+     - "80:80"
+     - "443:443"
 
   oauth2google:
     image: dpsocialauth/proxy:latest
