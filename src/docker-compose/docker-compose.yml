@@ -12,6 +12,9 @@ services:
         - ../nginx/upstream.php:/var/www/public/upstream.php
         - ../nginx/nginx-supervisor.ini:/etc/supervisor.d/nginx-supervisor.ini
         - ../nginx/www.conf:/etc/php7/php-fpm.d/www.conf
+        - ../nginx/auth.deskpro.com.key:/etc/nginx/pki/auth.deskpro.com.key
+        - ../nginx/auth.deskpro.com.crt:/etc/nginx/pki/auth.deskpro.com.crt
+        - ../nginx/dhparam.pem:/etc/nginx/pki/dhparam.pem
     hostname: gateway
     container_name: ${COMPOSE_PROJECT_NAME}-gateway
     environment:
