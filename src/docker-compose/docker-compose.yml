@@ -18,7 +18,7 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}-gateway
     environment:
       - DOCKER_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
-      - SERVICE_SECRET=asecret
+      - SERVICE_SECRET=dev
       - DP_SITE_HOSTNAME_SUFFIX=.deskpro.com
     ports:
      - "80:80"
@@ -29,12 +29,10 @@ services:
     command: '--http-address="0.0.0.0:4180" --proxy-prefix=/google/oauth2 --provider=google --upstream=http://172.17.0.1:8082 --approval-prompt=force --redirect-url=http://auth.deskpro-dev.co.uk:8080/google/oauth2/callback --client-id=googleclientid --client-secret=googleclientsecret --email-domain=* --cookie-secret=secretssecretsecret --cookie-secure=true '
     container_name: ${COMPOSE_PROJECT_NAME}-oauth2google
     hostname: oauth2google
-    network_mode: bridge
 
   oauth2linkedin:
     image: dpoauth2proxy/dev:latest
     command: '--http-address="0.0.0.0:4180" --proxy-prefix=/linkedin/oauth2 --provider=linkedin --upstream=http://172.17.0.1:8082 --approval-prompt=force --redirect-url=http://auth.deskpro-dev.co.uk:8080/linkedin/oauth2/callback --client-id=linkedinclientid --client-secret=linkedinsecret --cookie-secret=secretssecretsecret --cookie-secure=true'
     container_name: ${COMPOSE_PROJECT_NAME}-oauth2linkedin
     hostname: oauth2linkedin
-    network_mode: bridge
 
