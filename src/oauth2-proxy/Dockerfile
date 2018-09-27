@@ -18,6 +18,7 @@ RUN set -ex \
   	&& chmod +x /usr/local/bin/oauth2_proxy \
   	&& apk del .fetch-deps
 
+COPY oauth2_proxy.cfg /etc/oauth2_proxy.cfg
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
