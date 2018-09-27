@@ -18,8 +18,9 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}-gateway
     environment:
       - DOCKER_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
-      - SERVICE_SECRET=dev
       - DP_SITE_HOSTNAME_SUFFIX=.deskpro.com
+    env_file:
+      - gateway-env-file
     ports:
      - "80:80"
      - "443:443"
