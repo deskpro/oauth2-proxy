@@ -8,16 +8,17 @@ function urlsafeB64Encode($input) : string
 }
 
 
-function createSignature(): string {
+function createSignature($timestamp): string {
 
     $msg = implode("\n", [
         $_SERVER['HTTP_X_FORWARDED_USER'],
-        $_SERVER['HTTP_X_FORWARDED_EMAIL']
+        $_SERVER['HTTP_X_FORWARDED_EMAIL'],
+        $timestamp,
     ]);
 
     $algorithm = "sha256";
     $signature = hash_hmac($algorithm, $msg, $_SERVER['SERVICE_SECRET'], true);
-    return urlsafeB64Encode($signature);
+    return urlsafeB64Encode($signature) . "," . $timestamp ;
 }
 
 function redirect()
@@ -34,11 +35,14 @@ function redirect()
         $profile = [];
     }
 
-    $signature = createSignature();
+    // create the signature
+    $timestamp = time();
+    $signature = createSignature($timestamp);
 
     $queryParams = [
         'email' =>      $_SERVER['HTTP_X_FORWARDED_EMAIL'],
         'user' =>       $_SERVER['HTTP_X_FORWARDED_USER'],
+        'timestamp' =>  $timestamp,
         'signature' =>  $signature,
     ];
     $profileParams = ["name", "firstName", "lastName", "phone", "organization", "avatar", "country", "locale" ];
@@ -60,13 +64,21 @@ function redirect()
 
 function verifySignature()
 {
-    $signature = createSignature();
-    $existingSignature = $_SERVER['HTTP_X_SIGNATURE'];
-    if ($signature === $existingSignature) {
-        header('HTTP/1.0 200 Ok');
-    } else {
+    list($message, $timestamp) = explode(",", $_SERVER['HTTP_X_SIGNATURE']);
+    $signature = createSignature($timestamp);
+    if ($signature !== $_SERVER['HTTP_X_SIGNATURE']) {
         header('HTTP/1.0 403 Forbidden');
+        return;
     }
+
+    // validity of the signature in seconds
+    $lifetime = 5;
+    if ($lifetime < time() - $timestamp) {
+        header('HTTP/1.0 403 Forbidden');
+        return;
+    }
+
+    header('HTTP/1.0 200 Ok');
 }
 
 if ($_SERVER['COMMAND'] === 'redirect') {
