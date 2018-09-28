@@ -4,7 +4,6 @@ version: '2'
 services:
   gateway:
     image: dpsocialauth/frontend:latest
-#    command: [nginx-debug, '-g', 'daemon off;']
     volumes:
         - ../nginx/oauth2.conf:/etc/nginx/conf.d/oauth2.conf
         - ../nginx/oauth2-dev.conf:/etc/nginx/conf.d/oauth2-dev.conf
@@ -12,32 +11,41 @@ services:
         - ../nginx/upstream.php:/var/www/public/upstream.php
         - ../nginx/nginx-supervisor.ini:/etc/supervisor.d/nginx-supervisor.ini
         - ../nginx/www.conf:/etc/php7/php-fpm.d/www.conf
+        - ../nginx/auth.deskpro.com.key:/etc/nginx/pki/auth.deskpro.com.key
+        - ../nginx/auth.deskpro.com.crt:/etc/nginx/pki/auth.deskpro.com.crt
+        - ../nginx/dhparam.pem:/etc/nginx/pki/dhparam.pem
     hostname: gateway
     container_name: ${COMPOSE_PROJECT_NAME}-gateway
     environment:
       - DOCKER_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
-      - SERVICE_SECRET=asecret
       - DP_SITE_HOSTNAME_SUFFIX=.deskpro.com
+    env_file:
+      - gateway-env-file
     ports:
-     - "8080:8080"
-     - "8081:8081"
-     - "8082:8082"
-    links:
-      - oauth2google
-      - oauth2linkedin
-    network_mode: bridge
+     - "80:80"
+     - "443:443"
 
   oauth2google:
     image: dpsocialauth/proxy:latest
-    command: '--http-address="0.0.0.0:4180" --proxy-prefix=/google/oauth2 --provider=google --upstream=http://172.17.0.1:8082 --approval-prompt=force --redirect-url=http://auth.deskpro-dev.co.uk:8080/google/oauth2/callback --client-id=googleclientid --client-secret=googleclientsecret --email-domain=* --cookie-secret=secretssecretsecret --cookie-secure=true '
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/google/oauth2 --provider=google --redirect-url="https://auth.deskpro.com/google/oauth2/callback"
     container_name: ${COMPOSE_PROJECT_NAME}-oauth2google
     hostname: oauth2google
-    network_mode: bridge
+    env_file:
+      - proxy-env-file
+      - google-env-file
 
   oauth2linkedin:
-    image: dpoauth2proxy/dev:latest
-    command: '--http-address="0.0.0.0:4180" --proxy-prefix=/linkedin/oauth2 --provider=linkedin --upstream=http://172.17.0.1:8082 --approval-prompt=force --redirect-url=http://auth.deskpro-dev.co.uk:8080/linkedin/oauth2/callback --client-id=linkedinclientid --client-secret=linkedinsecret --cookie-secret=secretssecretsecret --cookie-secure=true'
+    image: dpsocialauth/proxy:latest
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/linkedin/oauth2 --provider=linkedin --redirect-url=https://auth.deskpro.com/linkedin/oauth2/callback 
     container_name: ${COMPOSE_PROJECT_NAME}-oauth2linkedin
     hostname: oauth2linkedin
-    network_mode: bridge
+    env_file:
+      - proxy-env-file
+      - linkedin-env-file
 
+  oauth2azure:
+    image: dpsocialauth/proxy:latest
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/azure/oauth2 --provider=azure --redirect-url=https://auth.deskpro.com/azure/oauth2/callback
+    env_file:
+      - proxy-env-file
+      - azure-env-file
