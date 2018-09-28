@@ -8,9 +8,11 @@ services:
         - ../nginx/oauth2.conf:/etc/nginx/conf.d/oauth2.conf
         - ../nginx/oauth2-dev.conf:/etc/nginx/conf.d/oauth2-dev.conf
         - ../nginx/nginx.conf:/etc/nginx/nginx.conf
-        - ../nginx/upstream.php:/var/www/public/upstream.php
         - ../nginx/nginx-supervisor.ini:/etc/supervisor.d/nginx-supervisor.ini
         - ../nginx/www.conf:/etc/php7/php-fpm.d/www.conf
+        - ../upstream/upstream.php:/var/www/public/upstream.php
+        - ../upstream/profiles.php:/var/www/public/profiles.php
+        - ../upstream/index.php:/var/www/public/index.php
         - ../nginx/auth.deskpro.com.key:/etc/nginx/pki/auth.deskpro.com.key
         - ../nginx/auth.deskpro.com.crt:/etc/nginx/pki/auth.deskpro.com.crt
         - ../nginx/dhparam.pem:/etc/nginx/pki/dhparam.pem
@@ -36,7 +38,7 @@ services:
 
   oauth2linkedin:
     image: dpsocialauth/proxy:latest
-    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/linkedin/oauth2 --provider=linkedin --redirect-url=https://auth.deskpro.com/linkedin/oauth2/callback 
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/linkedin/oauth2 --provider=linkedin --redirect-url=https://auth.deskpro.com/linkedin/oauth2/callback
     container_name: ${COMPOSE_PROJECT_NAME}-oauth2linkedin
     hostname: oauth2linkedin
     env_file:

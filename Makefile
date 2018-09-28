@@ -1,4 +1,4 @@
-all: proxy-frontend proxy-docker
+all: proxy-upstream proxy-docker proxy-frontend
 
 proxy-frontend:
 	echo "building frontend (nginx) image " ;\
@@ -8,6 +8,11 @@ proxy-frontend:
 proxy-docker:
 	echo "building proxy (bitly) image  " ;\
 	cd src/oauth2-proxy ;\
-	docker image build --tag dpsocialauth/proxy .
+	docker image build --no-cache --tag dpsocialauth/proxy .
 
-.PHONY: oauth2proxy-docker all
+proxy-upstream:
+	echo "building upstream " ;\
+	cd src/upstream ;\
+	docker image build --tag dpsocialauth/upstream:php .
+
+.PHONY: proxy-frontend proxy-docker all
