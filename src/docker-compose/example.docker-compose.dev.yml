@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+  gateway:
+    volumes:
+        - ../nginx/oauth2.conf:/etc/nginx/conf.d/oauth2.conf
+        - ../nginx/oauth2-dev.conf:/etc/nginx/conf.d/oauth2-dev.conf
+        - ../nginx/nginx.conf:/etc/nginx/nginx.conf
+        - ../nginx/nginx-supervisor.ini:/etc/supervisor.d/nginx-supervisor.ini
+        - ../nginx/www.conf:/etc/php7/php-fpm.d/www.conf
+        - ../upstream/upstream.php:/var/www/public/upstream.php
+        - ../upstream/profiles.php:/var/www/public/profiles.php
+        - ../upstream/index.php:/var/www/public/index.php
+        - ../nginx/auth.deskpro.com.key:/etc/nginx/pki/auth.deskpro.com.key
+        - ../nginx/auth.deskpro.com.crt:/etc/nginx/pki/auth.deskpro.com.crt
+        - ../nginx/dhparam.pem:/etc/nginx/pki/dhparam.pem
+    environment:
+      - DP_SITE_HOSTNAME_SUFFIX=.deskpro.com
+    ports:
+     - "8080:80"
+     - "8443:443"
+
+  oauth2google:
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/google/oauth2 --provider=google --redirect-url=https://auth.deskpro.com:8443/google/oauth2/callback
+
+  oauth2linkedin:
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/linkedin/oauth2 --provider=linkedin --redirect-url=https://auth.deskpro.com:8443/linkedin/oauth2/callback
+
+  oauth2azure:
+    command: --config=/etc/oauth2_proxy.cfg --proxy-prefix=/azure/oauth2 --provider=azure --redirect-url=https://auth.deskpro.com:8443/azure/oauth2/callback
+
