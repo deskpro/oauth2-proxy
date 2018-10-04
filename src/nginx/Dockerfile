@@ -16,8 +16,11 @@ COPY www.conf /etc/php7/php-fpm.d/www.conf
 
 COPY oauth2.conf /etc/nginx/conf.d/oauth2.conf
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY www.conf /etc/php7/php-fpm.d/www.conf
+COPY auth.deskpro.com.key /etc/nginx/pki/auth.deskpro.com.key
+COPY auth.deskpro.com.crt /etc/nginx/pki/auth.deskpro.com.crt
+COPY dhparam.pem /etc/nginx/pki/dhparam.pem
 
+COPY www.conf /etc/php7/php-fpm.d/www.conf
 RUN mkdir -p /var/run/php-fpm
 
 RUN mkdir -p /var/log/supervisor

@@ -4,18 +4,6 @@ version: '2'
 services:
   gateway:
     image: dpsocialauth/frontend:latest
-    volumes:
-        - ../nginx/oauth2.conf:/etc/nginx/conf.d/oauth2.conf
-        - ../nginx/oauth2-dev.conf:/etc/nginx/conf.d/oauth2-dev.conf
-        - ../nginx/nginx.conf:/etc/nginx/nginx.conf
-        - ../nginx/nginx-supervisor.ini:/etc/supervisor.d/nginx-supervisor.ini
-        - ../nginx/www.conf:/etc/php7/php-fpm.d/www.conf
-        - ../upstream/upstream.php:/var/www/public/upstream.php
-        - ../upstream/profiles.php:/var/www/public/profiles.php
-        - ../upstream/index.php:/var/www/public/index.php
-        - ../nginx/auth.deskpro.com.key:/etc/nginx/pki/auth.deskpro.com.key
-        - ../nginx/auth.deskpro.com.crt:/etc/nginx/pki/auth.deskpro.com.crt
-        - ../nginx/dhparam.pem:/etc/nginx/pki/dhparam.pem
     hostname: gateway
     container_name: ${COMPOSE_PROJECT_NAME}-gateway
     environment:
@@ -23,9 +11,6 @@ services:
       - DP_SITE_HOSTNAME_SUFFIX=.deskpro.com
     env_file:
       - gateway-env-file
-    ports:
-     - "80:80"
-     - "443:443"
 
   oauth2google:
     image: dpsocialauth/proxy:latest

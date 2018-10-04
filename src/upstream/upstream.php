@@ -26,7 +26,6 @@ function redirect()
     $provider  = $_SERVER['OAUTH2PROXY_PROVIDER'];
     $hostname  = $_SERVER['OAUTH2PROXY_X_FORWARDED_FOR_SITE'] . $_SERVER['DP_SITE_HOSTNAME_SUFFIX'];
 
-
     try {
         $token = $_SERVER['HTTP_X_FORWARDED_ACCESS_TOKEN'];
         $profile = \Oauth2\Profiles::profile($token, $provider);
@@ -55,7 +54,7 @@ function redirect()
     $url = implode("", [
         "scheme" => "https://",
         "host" =>   $hostname,
-        "path" =>   "/agent/login/authenticate-callback/$provider/oauth2/end",
+        "path" =>   "/social/authenticate-callback/$provider/oauth2/end",
         "query" =>  '?'.http_build_query($queryParams)
     ]);
 
