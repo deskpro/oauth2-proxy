@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  gateway:
+    environment:
+      - DP_SITE_HOSTNAME_SUFFIX=.deskpro.com
+    ports:
+     - "80:80"
+     - "443:443"

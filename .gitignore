@@ -1,1 +1,2 @@
 src/docker-compose/*-env-file
+src/docker-compose/docker-compose.dev.yml
